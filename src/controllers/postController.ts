@@ -5,7 +5,7 @@ import fileService from "../services/fileService"
 import userService from "../DBservices/userService"
 
 interface Post {
-    userId: string,
+    userId: any,
     image: string,
     likes: string[],
     comments: string[]

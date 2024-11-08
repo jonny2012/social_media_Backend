@@ -17,17 +17,17 @@ class PostService {
         const userPosts = await PostModel.find({ _id: userId })
         return userPosts
     }
-    async updatePostComments(postId: any, commentId: any) {
+    async updatePostComments(postId: string, commentId: string) {
 
         const updatedPost = await PostModel.findByIdAndUpdate({ _id: postId }, { $push: { comments: commentId } })
         return updatedPost
     }
-    async updateLikes(postId: any, userId: string) {
+    async updateLikes(postId: string, userId: string) {
 
         const updatedPost = await PostModel.findByIdAndUpdate({ _id: postId }, { $addToSet: { likes: userId } }, { new: true })
         return updatedPost
     }
-    async removeLikes(postId: any, userId: string) {
+    async removeLikes(postId: string, userId: string) {
 
         const updatedPost = await PostModel.findByIdAndUpdate({ _id: postId }, { $pull: { likes: userId } }, { new: true })
         return updatedPost
