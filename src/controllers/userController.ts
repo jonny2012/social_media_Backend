@@ -2,7 +2,6 @@ import userService from "../DBservices/userService";
 import ApiError from "../errors/apiErrors";
 import { Request, Response, NextFunction } from "express";
 
-
 class UserController {
 
     async getUserById(req: Request, res: Response, next: NextFunction): Promise<any> {
@@ -23,7 +22,20 @@ class UserController {
             next(ApiError.internal(error))
         }
     }
+    async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<any> {
 
+        try {
+            const findedUsers = await userService.findAllUsers()
+            if (!findedUsers) {
+                res.status(404).json({ message: " Users not found" })
+                next(ApiError.badRequest("Users not found "))
+            }
+            return res.json(findedUsers)
+        }
+        catch (error: any) {
+            next(ApiError.internal(error))
+        }
+    }
     async getAllUserDataByUserId(req: Request, res: Response, next: NextFunction): Promise<any> {
         const userId = req.params.id
         try {
@@ -40,5 +52,71 @@ class UserController {
             next(ApiError.internal(error))
         }
     }
+    async updateUserProfileImage(req: Request, res: Response, next: NextFunction): Promise<any> {
+        const userId = req.params.id
+        const userProfileImage = req.body.profileImage
+        try {
+            if (userId || userProfileImage) {
+                res.status(400).json({ message: "UserID or folower Id not entered" })
+                next(ApiError.badRequest("Wrong  request data"))
+            }
+            const userData = await userService.updateProfileImage(userId, userProfileImage)
+
+            if (!userData) {
+                res.json({ message: "Error on get userData" })
+                next(ApiError.badRequest("UserId is not correct"))
+            }
+            return res.json(userData)
+        }
+        catch (error: any) {
+            next(ApiError.internal(error))
+            res.status(500).json({ message: "Internal server Error" })
+        }
+    }
+
+    async updateFollowers(req: Request, res: Response, next: NextFunction): Promise<any> {
+        const userId = req.params.id
+        const folowerId = req.body.folowerId
+        try {
+            if (userId || folowerId) {
+                res.status(400).json({ message: "UserID or folower Id not entered" })
+                next(ApiError.badRequest("Wrong  request data"))
+            }
+            const userData = await userService.updateUserFolowers(userId, folowerId)
+
+            if (!userData) {
+                res.json({ message: "Error on get userData" })
+                next(ApiError.badRequest("UserId is not correct"))
+            }
+            return res.json(userData)
+        }
+        catch (error: any) {
+            next(ApiError.internal(error))
+            res.status(500).json({ message: "Internal server Error" })
+        }
+    }
+
+    async updateUserFollowing(req: Request, res: Response, next: NextFunction): Promise<any> {
+        const userId = req.params.id
+        const folowingUserId = req.body.following
+        try {
+            if (userId || folowingUserId) {
+                res.status(400).json({ message: "UserID or folower Id not entered" })
+                next(ApiError.badRequest("Wrong  request data"))
+            }
+            const userData = await userService.updateUserFolowers(userId, folowingUserId)
+
+            if (!userData) {
+                res.json({ message: "Error on get user data" })
+                next(ApiError.badRequest("UserId is not correct"))
+            }
+            return res.json(userData)
+        }
+        catch (error: any) {
+            next(ApiError.internal(error))
+            res.status(500).json({ message: "Internal server Error" })
+        }
+    }
+
 }
 export default new UserController()

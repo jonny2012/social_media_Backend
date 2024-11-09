@@ -22,12 +22,12 @@ class CommentController {
             const user = await userService.findUserById(userId);
             if (!user) {
                 next(ApiError.badRequest("User not found"));
-                return res.json({ message: "User with this userId not found" });
+                return res.status(404).json({ message: "User with this userId not found" });
             }
             const post = await postService.findPostsById(postId);
             if (!post) {
                 next(ApiError.badRequest("Post with whis postId not found"));
-                return res.json({ message: "Post with this postId not found" });
+                return res.status(404).json({ message: "Post with this postId not found" });
             }
             const newComment = await commentService.createComment(
                 userId,
@@ -36,12 +36,13 @@ class CommentController {
             );
             if (!newComment) {
                 next(ApiError.badRequest("Eror on creating comment"));
-                return res.json({ message: "Error on cresting comment" });
+                return res.status(404).json({ message: "Error on cresting comment" });
             }
             await postService.updatePostComments(newComment.postId, newComment._id);
             return res.json(newComment);
-        } catch (err: any) {
-            next(ApiError.internal(err.message));
+        } catch (error: any) {
+            next(ApiError.internal(error.message));
+            res.status(500).json(error.message)
         }
     }
 

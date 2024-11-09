@@ -6,6 +6,12 @@ class UserService {
         return newUserProfile;
     }
 
+    async findAllUsers() {
+
+        const users = await UserModel.find()
+        return users
+    }
+
     async findUserById(id: string) {
         const findedUser = UserModel.findById(id);
         return findedUser;
@@ -29,7 +35,6 @@ class UserService {
         );
         return newPost;
     }
-
     async updateUserFolowers(userId: string, folowerId: string) {
         const newFolower = await UserModel.findByIdAndUpdate(
             { _id: userId },

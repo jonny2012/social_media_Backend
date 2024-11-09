@@ -10,7 +10,6 @@ interface Post {
     likes: string[],
     comments: string[]
 }
-
 class PostController {
     async createPost(req: Request, res: Response, next: NextFunction): Promise<any> {
 
@@ -23,7 +22,7 @@ class PostController {
             }
             const fileName = fileService.savefile(image)
             if (!fileName) {
-                res.json("error on save image in database")
+                res.status(400).json("error on save image in database")
                 return
             }
             const newPost = await postService.createPost(userId, fileName)
@@ -32,6 +31,8 @@ class PostController {
         }
         catch (error: any) {
             next(ApiError.internal(error.message))
+            res.status(500).json(error.message)
+
         }
     }
 
@@ -42,6 +43,8 @@ class PostController {
         }
         catch (error: any) {
             next(ApiError.internal(error.message))
+            res.status(500).json(error.message)
+
         }
     }
     async getAllPostsByUserId(req: Request, res: Response, next: NextFunction): Promise<any> {
@@ -53,6 +56,8 @@ class PostController {
         }
         catch (error: any) {
             next(ApiError.internal(error.message))
+            res.status(500).json(error.message)
+
         }
     }
 
@@ -65,6 +70,8 @@ class PostController {
         }
         catch (error: any) {
             next(ApiError.internal(error.message))
+            res.status(500).json(error.message)
+
         }
     }
 
@@ -79,6 +86,8 @@ class PostController {
         }
         catch (error: any) {
             next(ApiError.internal(error.message))
+            res.status(500).json(error.message)
+
         }
     }
     async removePostLikes(req: Request, res: Response, next: NextFunction): Promise<any> {
@@ -92,6 +101,8 @@ class PostController {
         }
         catch (error: any) {
             next(ApiError.internal(error.message))
+            res.status(500).json(error.message)
+
         }
     }
 }

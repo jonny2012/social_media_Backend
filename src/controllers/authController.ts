@@ -30,8 +30,10 @@ class AuthController {
             await authService.createUser(username, email, hashedPassword);
             await userService.createUser(username, fullName, profileImageName);
             return res.json({ message: "User succesfully created" });
-        } catch (error) {
+        } catch (error: any) {
             next(ApiError.internal("Internal server Error"))
+            res.status(500).json(error.message)
+
 
         }
     }
@@ -44,7 +46,7 @@ class AuthController {
                 return;
             }
             const user = await authService.findOneUserByEmail(email);
-            if (!user) return res.json({ message: "Wrong email" });
+            if (!user) return res.status(400).json({ message: "Wrong email" });
 
             if (!password) return res.json({ message: "Password not entered" });
             const isValidPassword = bcrypt.compare(password, user.password);
@@ -54,15 +56,16 @@ class AuthController {
             const token = jwt.sign({ userId: user._id, email }, "secret_key", {
                 expiresIn: "1h",
             });
-
             return res.status(200).json({
                 message: "Login successful",
                 token,
                 user: { id: user._id, email: user.email, username: user.username },
             });
-        } catch (err) {
+        } catch (error: any) {
             next(ApiError.internal("Internal server Error"))
+            res.status(500).json(error.message)
         }
+
     }
 }
 
