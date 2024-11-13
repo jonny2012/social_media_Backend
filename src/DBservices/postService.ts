@@ -9,7 +9,7 @@ class PostService {
     }
     async findAllPosts() {
 
-        const allPosts = await PostModel.find().populate("likes").populate({ path: "comments", populate: { path: "userId" } })
+        const allPosts = await PostModel.find().populate("likes").populate( "comments").populate("userId")
         return allPosts
     }
 

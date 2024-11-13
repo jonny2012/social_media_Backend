@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express"
 import ApiError from "../errors/apiErrors"
 import fileService from "../services/fileService"
 import userService from "../DBservices/userService"
+import notificationService from "../DBservices/notificationService"
+import { CustomRequest } from "../middlewares/authMiddleware"
 
 interface Post {
     userId: any,
@@ -75,13 +77,17 @@ class PostController {
         }
     }
 
-    async updatePostLikes(req: Request, res: Response, next: NextFunction): Promise<any> {
+    async updatePostLikes(req: CustomRequest, res: Response, next: NextFunction): Promise<any> {
         const { userId }: Post = req.body
         const postId = req.params.id
+        const currentUserId = req.user?.userId
         try {
-
+            if(!currentUserId){
+                res.status(404).json({message:"current user not defined"})
+                return
+            }
             const updatedPost = await postService.updateLikes(postId, userId)
-
+                    await notificationService.createLikeNotification(userId,currentUserId,postId)
             res.json(updatedPost)
         }
         catch (error: any) {
